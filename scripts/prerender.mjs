@@ -16,7 +16,8 @@ let html = template.replace("<!--app-html-->", render());
 // Put the (small) stylesheet inside the page: one less download before the
 // first paint on a slow phone connection.
 for (const m of [...html.matchAll(/<link rel="stylesheet" crossorigin href="\.\/(assets\/[^"]+\.css)">/g)]) {
-  const css = await readFile(path.join(dist, m[1]), "utf8");
+  // url(../fonts/x) is relative to assets/; make it relative to the page.
+  const css = (await readFile(path.join(dist, m[1]), "utf8")).replaceAll("url(../", "url(./");
   html = html.replace(m[0], () => `<style>${css}</style>`);
 }
 await writeFile(path.join(dist, "index.html"), html);

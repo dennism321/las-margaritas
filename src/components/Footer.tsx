@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Check, Globe, Heart, MapPin, Phone, Send } from "lucide-react";
 import Logo from "./Logo";
-import { EASE } from "./Reveal";
 
 type IconProps = { className?: string };
 
@@ -94,53 +92,41 @@ export default function Footer() {
               Stay in the loop
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-cream-300">
-              Specials, events, and news from Las Margaritas in Milford. No spam, solo sabor.
+              Specials, events, and news from Las Margaritas in Milford. No
+              spam, solo sabor.
             </p>
           </div>
           <div className="w-full max-w-md">
-            <AnimatePresence mode="wait">
-              {done ? (
-                <motion.p
-                  key="done"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: EASE }}
-                  className="flex items-center gap-3 rounded-full border border-agave-400/30 bg-agave-400/10 px-6 py-4 text-sm font-bold text-agave-300"
+            {done ? (
+              <p className="anim-rise-in flex items-center gap-3 rounded-full border border-agave-400/30 bg-agave-400/10 px-6 py-4 text-sm font-bold text-agave-300">
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-agave-400/20">
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
+                </span>
+                You're on the list — ¡nos vemos pronto!
+              </p>
+            ) : (
+              <form onSubmit={submit} className="flex gap-3">
+                <label htmlFor="newsletter-email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="newsletter-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="min-w-0 flex-1 rounded-full border border-white/12 bg-white/5 px-5 py-3.5 text-sm text-cream-50 outline-none transition-colors placeholder:text-cream-500 focus:border-marigold-400/50 focus:bg-white/[0.08]"
+                />
+                <button
+                  type="submit"
+                  className="btn-shine inline-flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-b from-marigold-300 to-marigold-500 px-6 py-3.5 text-sm font-bold text-night-950 shadow-[0_8px_28px_-8px_rgba(240,191,79,0.6)] transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-agave-400/20">
-                    <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
-                  </span>
-                  You're on the list — ¡nos vemos pronto!
-                </motion.p>
-              ) : (
-                <motion.form
-                  key="form"
-                  onSubmit={submit}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="flex gap-3"
-                >
-                  <label htmlFor="newsletter-email" className="sr-only">
-                    Email address
-                  </label>
-                  <input
-                    id="newsletter-email"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="min-w-0 flex-1 rounded-full border border-white/12 bg-white/5 px-5 py-3.5 text-sm text-cream-50 outline-none transition-colors placeholder:text-cream-500 focus:border-marigold-400/50 focus:bg-white/[0.08]"
-                  />
-                  <button
-                    type="submit"
-                    className="btn-shine inline-flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-b from-marigold-300 to-marigold-500 px-6 py-3.5 text-sm font-bold text-night-950 shadow-[0_8px_28px_-8px_rgba(240,191,79,0.6)] transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    <Send className="h-4 w-4" aria-hidden />
-                    <span className="hidden sm:inline">Sign up</span>
-                  </button>
-                </motion.form>
-              )}
-            </AnimatePresence>
+                  <Send className="h-4 w-4" aria-hidden />
+                  <span className="hidden sm:inline">Sign up</span>
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
@@ -149,8 +135,8 @@ export default function Footer() {
           <div>
             <Logo variant="footer" />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream-300">
-              Authentic Mexican food with genuine ingredients and vibrant flavors, on New Haven
-              Avenue in Milford, CT.
+              Authentic Mexican food with genuine ingredients and vibrant
+              flavors, on New Haven Avenue in Milford, CT.
             </p>
             <div className="mt-6 flex gap-3">
               {socials.map((s) => (
@@ -167,7 +153,9 @@ export default function Footer() {
           </div>
 
           <nav aria-label="Explore">
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-cream-500">Explore</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-cream-500">
+              Explore
+            </h4>
             <ul className="mt-5 space-y-3">
               {explore.map((l) => (
                 <li key={l.label}>
@@ -183,10 +171,15 @@ export default function Footer() {
           </nav>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-cream-500">Visit Us</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-cream-500">
+              Visit Us
+            </h4>
             <ul className="mt-5 space-y-4 text-sm text-cream-300">
               <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400" aria-hidden />
+                <MapPin
+                  className="mt-0.5 h-4 w-4 shrink-0 text-marigold-400"
+                  aria-hidden
+                />
                 <span>
                   501 New Haven Ave
                   <br />
@@ -198,7 +191,10 @@ export default function Footer() {
                   href="tel:+12038781910"
                   className="flex items-center gap-3 transition-colors hover:text-marigold-300"
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-marigold-400" aria-hidden />
+                  <Phone
+                    className="h-4 w-4 shrink-0 text-marigold-400"
+                    aria-hidden
+                  />
                   (203) 878-1910
                 </a>
               </li>
@@ -207,7 +203,10 @@ export default function Footer() {
                   href="https://lasmargaritas203.com"
                   className="flex items-center gap-3 transition-colors hover:text-marigold-300"
                 >
-                  <Globe className="h-4 w-4 shrink-0 text-marigold-400" aria-hidden />
+                  <Globe
+                    className="h-4 w-4 shrink-0 text-marigold-400"
+                    aria-hidden
+                  />
                   lasmargaritas203.com
                 </a>
               </li>
@@ -215,7 +214,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-cream-500">Hours</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-cream-500">
+              Hours
+            </h4>
             <ul className="mt-5 space-y-3 text-sm text-cream-300">
               <li className="flex items-center justify-between gap-4">
                 <span>Tue – Thu</span>
@@ -239,7 +240,10 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-7 text-xs text-cream-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} Las Margaritas Mexican Restaurant. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Las Margaritas Mexican Restaurant. All
+            rights reserved.
+          </p>
           <div className="flex items-center gap-6">
             <a href="#top" className="transition-colors hover:text-cream-100">
               Privacy
@@ -249,7 +253,10 @@ export default function Footer() {
             </a>
             <span className="inline-flex items-center gap-1.5">
               Hecho con
-              <Heart className="h-3.5 w-3.5 fill-chili-400 text-chili-400" aria-hidden />
+              <Heart
+                className="h-3.5 w-3.5 fill-chili-400 text-chili-400"
+                aria-hidden
+              />
               in Milford, CT
             </span>
           </div>

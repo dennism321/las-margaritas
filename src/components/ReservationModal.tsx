@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarCheck,
   CheckCircle2,
@@ -10,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { LogoMark } from "./Logo";
-import { EASE } from "./Reveal";
+import { usePresence } from "../utils/usePresence";
 
 const times = [
   "5:00 PM",
@@ -49,6 +48,7 @@ export default function ReservationModal({ open, onClose }: Props) {
   const [occasion, setOccasion] = useState("Just dinner");
   const [party, setParty] = useState(4);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+  const dialog = usePresence(open, 450);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -78,29 +78,24 @@ export default function ReservationModal({ open, onClose }: Props) {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <AnimatePresence>
-      {open && (
+    <>
+      {dialog.mounted && (
         <div
           className="fixed inset-0 z-[80] flex items-end justify-center p-4 sm:items-center sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-labelledby="reservation-title"
         >
-          <motion.button
+          <button
             aria-label="Close reservation dialog"
-            className="absolute inset-0 bg-night-950/80 backdrop-blur-md"
+            className={`absolute inset-0 bg-night-950/80 backdrop-blur-md ${
+              dialog.closing ? "anim-fade-out" : "anim-fade-in"
+            }`}
             onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           />
 
-          <motion.div
-            initial={{ opacity: 0, y: 48, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 32, scale: 0.97 }}
-            transition={{ duration: 0.45, ease: EASE }}
-            className="glass-deep relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[2rem] shadow-2xl shadow-black/70"
+          <div
+            className={`${dialog.closing ? "anim-dialog-out" : "anim-dialog-in"} glass-deep relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[2rem] shadow-2xl shadow-black/70`}
           >
             <div
               aria-hidden
@@ -218,8 +213,13 @@ export default function ReservationModal({ open, onClose }: Props) {
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className="font-display text-lg font-medium text-cream-50" aria-live="polite">
-                        {party >= 16 ? "16+ guests" : `${party} ${party === 1 ? "guest" : "guests"}`}
+                      <span
+                        className="font-display text-lg font-medium text-cream-50"
+                        aria-live="polite"
+                      >
+                        {party >= 16
+                          ? "16+ guests"
+                          : `${party} ${party === 1 ? "guest" : "guests"}`}
                       </span>
                       <button
                         type="button"
@@ -232,14 +232,16 @@ export default function ReservationModal({ open, onClose }: Props) {
                     </div>
                     {party >= 16 && (
                       <p className="mt-2 text-xs text-marigold-300">
-                        For parties of 16 or more, please call us at (203) 878-1910.
+                        For parties of 16 or more, please call us at (203)
+                        878-1910.
                       </p>
                     )}
                   </div>
 
                   <div>
                     <label htmlFor="res-occasion" className={labelCls}>
-                      Occasion <span className="text-cream-500">(optional)</span>
+                      Occasion{" "}
+                      <span className="text-cream-500">(optional)</span>
                     </label>
                     <select
                       id="res-occasion"
@@ -278,34 +280,32 @@ export default function ReservationModal({ open, onClose }: Props) {
                 </form>
               </div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.45, ease: EASE }}
-                className="p-9 text-center sm:p-12"
-              >
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.15, type: "spring", stiffness: 220, damping: 14 }}
-                  className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-agave-400/15 text-agave-300"
-                >
+              <div className="anim-pop-in p-9 text-center sm:p-12">
+                <span className="anim-spring-in mx-auto grid h-20 w-20 place-items-center rounded-full bg-agave-400/15 text-agave-300">
                   <CheckCircle2 className="h-10 w-10" aria-hidden />
-                </motion.span>
+                </span>
                 <h2 className="mt-6 font-display text-3xl font-semibold text-cream-50">
                   ¡Listo{name ? `, ${name.split(" ")[0]}` : ""}!
                 </h2>
                 <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-cream-300">
                   Your request for{" "}
                   <span className="font-bold text-cream-50">
-                    {party >= 16 ? "16+" : party} {party === 1 ? "guest" : "guests"}
+                    {party >= 16 ? "16+" : party}{" "}
+                    {party === 1 ? "guest" : "guests"}
                   </span>{" "}
                   on{" "}
                   <span className="font-bold text-cream-50">
-                    {date ? new Date(`${date}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) : "tonight"}
+                    {date
+                      ? new Date(`${date}T12:00:00`).toLocaleDateString(
+                          "en-US",
+                          { weekday: "long", month: "long", day: "numeric" },
+                        )
+                      : "tonight"}
                   </span>{" "}
-                  at <span className="font-bold text-cream-50">{time}</span> is in.
-                  {occasion !== "Just dinner" && ` We'll make it ${occasion.toLowerCase()}-worthy.`}{" "}
+                  at <span className="font-bold text-cream-50">{time}</span> is
+                  in.
+                  {occasion !== "Just dinner" &&
+                    ` We'll make it ${occasion.toLowerCase()}-worthy.`}{" "}
                   We'll contact {phone || "you"} to confirm.
                 </p>
                 <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -323,11 +323,11 @@ export default function ReservationModal({ open, onClose }: Props) {
                     Prefer to talk?
                   </a>
                 </div>
-              </motion.div>
+              </div>
             )}
-          </motion.div>
+          </div>
         </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

@@ -1,7 +1,5 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
-export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-
 type RevealProps = {
   children: ReactNode;
   delay?: number;

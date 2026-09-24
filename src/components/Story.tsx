@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Wheat } from "lucide-react";
+import Photo from "./Photo";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
 
@@ -78,22 +79,24 @@ export default function Story() {
                 className="absolute -inset-6 rounded-[3rem] bg-gradient-to-tr from-agave-500/10 via-transparent to-marigold-500/15 blur-2xl"
               />
               <div className="relative overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl shadow-black/50">
-                <img
+                <Photo
                   src="images/interior.webp"
                   alt="Warm string lights over dark wood tables and a bar"
                   width={1100}
                   height={600}
+                  sizes="(min-width: 1024px) 600px, (min-width: 512px) 512px, 100vw"
                   loading="lazy"
                   className="aspect-[4/3] w-full object-cover"
                 />
               </div>
 
               <div className="absolute -bottom-10 -right-3 w-44 rotate-3 overflow-hidden rounded-2xl border-4 border-night-950 shadow-2xl shadow-black/60 sm:-right-8 sm:w-56">
-                <img
+                <Photo
                   src="images/churros.webp"
                   alt="Golden churros dusted with cinnamon sugar"
                   width={1100}
                   height={600}
+                  sizes="(min-width: 640px) 224px, 176px"
                   loading="lazy"
                   className="aspect-square w-full object-cover"
                 />

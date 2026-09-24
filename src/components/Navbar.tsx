@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { CalendarCheck, Menu as MenuIcon, Phone, X } from "lucide-react";
+import { usePresence } from "../utils/usePresence";
 import Logo from "./Logo";
-import { EASE } from "./Reveal";
 
 const links = [
   { label: "Menu", href: "#menu" },
@@ -15,6 +14,7 @@ const links = [
 export default function Navbar({ onReserve }: { onReserve: () => void }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const drawer = usePresence(open, 450);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -50,7 +50,10 @@ export default function Navbar({ onReserve }: { onReserve: () => void }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 sm:px-8">
           <Logo />
 
-          <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
+          <nav
+            aria-label="Primary"
+            className="hidden items-center gap-8 lg:flex"
+          >
             {links.map((l) => (
               <a
                 key={l.href}
@@ -94,91 +97,79 @@ export default function Navbar({ onReserve }: { onReserve: () => void }) {
         </div>
       </header>
 
-      <AnimatePresence>
-        {open && (
-          <div className="fixed inset-0 z-[70] lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
-            <motion.button
-              aria-label="Close navigation menu"
-              className="absolute inset-0 bg-night-950/70 backdrop-blur-md"
-              onClick={() => setOpen(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <motion.div
-              className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col border-l border-white/10 bg-night-950/95 p-7 backdrop-blur-2xl"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.45, ease: EASE }}
-            >
-              <div className="flex items-center justify-between">
-                <Logo />
-                <button
-                  className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-cream-100 transition-colors hover:bg-white/10"
-                  onClick={() => setOpen(false)}
-                  aria-label="Close navigation menu"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <motion.nav
-                aria-label="Mobile"
-                className="mt-12 flex flex-col gap-2"
-                initial="hidden"
-                animate="show"
-                variants={{
-                  hidden: {},
-                  show: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } },
-                }}
+      {drawer.mounted && (
+        <div
+          className="fixed inset-0 z-[70] lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+        >
+          <button
+            aria-label="Close navigation menu"
+            className={`absolute inset-0 bg-night-950/70 backdrop-blur-md ${
+              drawer.closing ? "anim-fade-out" : "anim-fade-in"
+            }`}
+            onClick={() => setOpen(false)}
+          />
+          <div
+            className={`absolute inset-y-0 right-0 flex w-full max-w-sm flex-col border-l border-white/10 bg-night-950/95 p-7 backdrop-blur-2xl ${
+              drawer.closing ? "anim-drawer-out" : "anim-drawer-in"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Logo />
+              <button
+                className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-cream-100 transition-colors hover:bg-white/10"
+                onClick={() => setOpen(false)}
+                aria-label="Close navigation menu"
               >
-                {links.map((l) => (
-                  <motion.a
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="group flex items-center justify-between rounded-2xl px-4 py-4 font-display text-3xl font-medium text-cream-100 transition-colors hover:bg-white/5 hover:text-marigold-300"
-                    variants={{
-                      hidden: { opacity: 0, x: 28 },
-                      show: { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } },
-                    }}
-                  >
-                    {l.label}
-                    <span
-                      aria-hidden
-                      className="h-1.5 w-1.5 rounded-full bg-marigold-400 opacity-0 transition-opacity group-hover:opacity-100"
-                    />
-                  </motion.a>
-                ))}
-              </motion.nav>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
 
-              <div className="mt-auto space-y-4 pt-10">
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    onReserve();
-                  }}
-                  className="btn-shine inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-marigold-300 to-marigold-500 px-5 py-3.5 text-sm font-bold text-night-950 shadow-[0_8px_28px_-8px_rgba(240,191,79,0.6)]"
-                >
-                  <CalendarCheck className="h-4 w-4" aria-hidden />
-                  Reserve a Table
-                </button>
+            <nav aria-label="Mobile" className="mt-12 flex flex-col gap-2">
+              {links.map((l, i) => (
                 <a
-                  href="tel:+12038781910"
-                  className="flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3.5 text-sm font-semibold text-cream-100"
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="anim-slide-in group flex items-center justify-between rounded-2xl px-4 py-4 font-display text-3xl font-medium text-cream-100 transition-colors hover:bg-white/5 hover:text-marigold-300"
+                  style={{ animationDelay: `${0.15 + i * 0.07}s` }}
                 >
-                  <Phone className="h-4 w-4 text-marigold-300" aria-hidden />
-                  (203) 878-1910
+                  {l.label}
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 rounded-full bg-marigold-400 opacity-0 transition-opacity group-hover:opacity-100"
+                  />
                 </a>
-                <p className="text-center text-xs text-cream-500">
-                  Tue – Sun from 12 PM · 501 New Haven Ave, Milford
-                </p>
-              </div>
-            </motion.div>
+              ))}
+            </nav>
+
+            <div className="mt-auto space-y-4 pt-10">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  onReserve();
+                }}
+                className="btn-shine inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-marigold-300 to-marigold-500 px-5 py-3.5 text-sm font-bold text-night-950 shadow-[0_8px_28px_-8px_rgba(240,191,79,0.6)]"
+              >
+                <CalendarCheck className="h-4 w-4" aria-hidden />
+                Reserve a Table
+              </button>
+              <a
+                href="tel:+12038781910"
+                className="flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3.5 text-sm font-semibold text-cream-100"
+              >
+                <Phone className="h-4 w-4 text-marigold-300" aria-hidden />
+                (203) 878-1910
+              </a>
+              <p className="text-center text-xs text-cream-500">
+                Tue – Sun from 12 PM · 501 New Haven Ave, Milford
+              </p>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </>
   );
 }

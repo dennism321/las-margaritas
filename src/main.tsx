@@ -6,6 +6,7 @@ import App from "./App";
 declare global {
   interface Window {
     __lmReady?: boolean;
+    __lmReadyAt?: number;
   }
 }
 
@@ -22,3 +23,4 @@ if (root.firstElementChild) hydrateRoot(root, app);
 else createRoot(root).render(app);
 
 window.__lmReady = true;
+window.__lmReadyAt = performance.now();

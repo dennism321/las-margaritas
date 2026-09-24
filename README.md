@@ -10,10 +10,18 @@ static HTML so phones show the full page before any JavaScript loads.
 ## Editing
 
 - Page content lives in `src/components/` (one file per section).
-- Photos are in `public/images/` (compressed WebP). Full-size originals are in
-  `originals/`.
+- Photos are in `public/images/` (compressed WebP). Card photos also have a
+  720px-wide `-720` copy for phones (used through `src/components/Photo.tsx`).
+  Full-size originals are in `originals/`.
+- Fonts are self-hosted and trimmed; see `public/fonts/README.md`.
 - Pushing to `main` rebuilds and publishes the site automatically
   (see `.github/workflows/deploy.yml`).
+
+## Checking load speed on a phone
+
+Open the site with `?timing` at the end of the address
+(https://dennism321.github.io/las-margaritas/?timing). A box appears after the
+page loads showing how long each step took on that device. Visitors never see it.
 
 ## Commands
 

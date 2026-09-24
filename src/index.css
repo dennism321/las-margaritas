@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/*
+ * Fonts are served from this site, trimmed to the weights and characters the
+ * page uses (see public/fonts/README.md). Italic Fraunces holds only letters,
+ * digits and basic punctuation, since it is used for short highlighted words.
+ */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url("/fonts/fraunces.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url("/fonts/fraunces-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/manrope.woff2") format("woff2");
+}
+
 @theme {
   --font-display: "Fraunces", Georgia, "Times New Roman", serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -203,6 +230,26 @@ body,
   to { opacity: 1; transform: none; }
 }
 
+/* Open/close animations for the menu drawer, dialogs, tabs and FAQ */
+.anim-fade-in { animation: lm-fade 0.3s ease both; }
+.anim-fade-out { animation: lm-fade 0.3s ease reverse both; }
+.anim-drawer-in { animation: lm-drawer 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-drawer-out { animation: lm-drawer 0.45s cubic-bezier(0.22, 1, 0.36, 1) reverse both; }
+.anim-dialog-in { animation: lm-dialog-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-dialog-out { animation: lm-dialog-out 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-slide-in { animation: lm-slide-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-rise-in { animation: lm-rise-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-pop-in { animation: lm-pop-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-spring-in { animation: lm-spring-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both; }
+@keyframes lm-fade { from { opacity: 0; } }
+@keyframes lm-drawer { from { transform: translateX(100%); } }
+@keyframes lm-dialog-in { from { opacity: 0; transform: translateY(48px) scale(0.97); } }
+@keyframes lm-dialog-out { to { opacity: 0; transform: translateY(32px) scale(0.97); } }
+@keyframes lm-slide-in { from { opacity: 0; transform: translateX(28px); } }
+@keyframes lm-rise-in { from { opacity: 0; transform: translateY(14px); } }
+@keyframes lm-pop-in { from { opacity: 0; transform: scale(0.9); } }
+@keyframes lm-spring-in { from { transform: scale(0); } }
+
 /* Phones: live blur and ambient animations cost more than they add */
 @media (max-width: 767px) {
   * {
@@ -210,6 +257,21 @@ body,
     backdrop-filter: none !important;
   }
   .glass { background: rgba(22, 17, 13, 0.78); }
+  /*
+   * The soft glows are big shapes blurred by up to 130px, which a phone's
+   * graphics chip must compute before it can show the screen. Fading the same
+   * shapes out with a mask looks nearly identical and costs almost nothing.
+   */
+  .blur-\[100px\],
+  .blur-\[120px\],
+  .blur-\[130px\],
+  .blur-2xl {
+    filter: none !important;
+    -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.5) 40%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.5) 40%, transparent 100%);
+  }
+  /* Full-screen film grain: nearly invisible on a small screen, but it sits over everything */
+  .grain-overlay { display: none; }
   .animate-pulse-soft,
   .animate-float,
   .animate-float-slow,
