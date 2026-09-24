@@ -1,12 +1,16 @@
-LAS MARGARITAS (MILFORD, CT) - LOCAL PREVIEW
+LAS MARGARITAS (MILFORD, CT) - WEBSITE
 
-1. Unzip this folder (don't open index.html from inside the zip).
-2. Double-click index.html. It opens in your default browser.
+Live site: https://dennism321.github.io/las-margaritas/
 
-All photos are built into index.html (compressed WebP), so the page
-shows them even if index.html is moved or opened on its own.
-The "images" folder holds the original full-size photos for reference;
-the page no longer needs it.
+index.html
+  The live website. Loads the compressed photos in images/*.webp
+  and only fetches each photo when the visitor scrolls near it.
+  Keep index.html and the "images" folder together.
+
+preview-offline.html
+  An all-in-one copy with every photo built in. Open or email it
+  anywhere and the photos still show. Bigger and slower to load, so
+  use it for previews only, not for the live site.
+
+images/*.jpg and images/logo-original.png are the full-size originals.
 Internet is only needed for the Google Fonts.
-
-This same folder can be uploaded as-is to GitHub Pages.
