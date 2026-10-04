@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
-import { CalendarCheck, Menu as MenuIcon, Phone, X } from "lucide-react";
-import { usePresence } from "../utils/usePresence";
-import Logo from "./Logo";
+import { Menu, Phone, X } from "lucide-react";
+import { cn } from "../utils/cn";
+import { RESTAURANT } from "../data/info";
+import LasMargaritasLogo from "./LasMargaritasLogo";
 
 const links = [
-  { label: "Menu", href: "#menu" },
-  { label: "Our Story", href: "#story" },
-  { label: "Dine & Order", href: "#events" },
-  { label: "Our Promise", href: "#reviews" },
-  { label: "FAQ", href: "#faq" },
+  { href: "#casa", label: "The Casa" },
+  { href: "#menu", label: "Menu" },
+  { href: "#cantina", label: "Cantina" },
+  { href: "#visit", label: "Visit" },
 ];
 
-export default function Navbar({ onReserve }: { onReserve: () => void }) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const drawer = usePresence(open, 450);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -23,153 +22,95 @@ export default function Navbar({ onReserve }: { onReserve: () => void }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
   return (
-    <>
-      <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "border-b border-white/[0.07] bg-night-950/85 py-3 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.9)] backdrop-blur-xl"
-            : "bg-transparent py-5"
-        }`}
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+        scrolled || open
+          ? "bg-carbon/95 shadow-lg shadow-black/20 backdrop-blur"
+          : "bg-transparent",
+      )}
+    >
+      <nav
+        aria-label="Main"
+        className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:h-22 sm:px-8"
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 sm:px-8">
-          <Logo />
+        <a
+          href="#top"
+          className="group flex items-center transition"
+          onClick={() => setOpen(false)}
+          aria-label="Las Margaritas Mexican Restaurant Home"
+        >
+          {/* Restaurant logo (transparent background) */}
+          <LasMargaritasLogo
+            className="h-[4.5rem] w-auto transition-transform duration-300 group-hover:scale-105 sm:h-20"
+          />
+        </a>
 
-          <nav
-            aria-label="Primary"
-            className="hidden items-center gap-8 lg:flex"
-          >
-            {links.map((l) => (
+        <ul className="hidden items-center gap-8 md:flex">
+          {links.map((l) => (
+            <li key={l.href}>
               <a
-                key={l.href}
                 href={l.href}
-                className="group relative text-sm font-semibold text-cream-100/75 transition-colors duration-300 hover:text-cream-50"
+                className="text-sm font-medium tracking-wide text-crema/85 transition-colors hover:text-marigold"
               >
                 {l.label}
-                <span
-                  aria-hidden
-                  className="absolute -bottom-1.5 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full bg-gradient-to-r from-marigold-400 to-chili-400 transition-transform duration-300 group-hover:scale-x-100"
-                />
               </a>
-            ))}
-          </nav>
+            </li>
+          ))}
+        </ul>
 
-          <div className="hidden items-center gap-6 lg:flex">
-            <a
-              href="tel:+12038781910"
-              className="hidden items-center gap-2 text-sm font-semibold text-cream-100/80 transition-colors hover:text-marigold-300 xl:flex"
-            >
-              <Phone className="h-4 w-4" aria-hidden />
-              (203) 878-1910
-            </a>
-            <button
-              onClick={onReserve}
-              className="btn-shine inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-marigold-300 to-marigold-500 px-5 py-2.5 text-sm font-bold text-night-950 shadow-[0_8px_28px_-8px_rgba(240,191,79,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_36px_-8px_rgba(240,191,79,0.75)] active:translate-y-0"
-            >
-              <CalendarCheck className="h-4 w-4" aria-hidden />
-              Reserve a Table
-            </button>
-          </div>
-
-          <button
-            className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-cream-100 transition-colors hover:bg-white/10 lg:hidden"
-            onClick={() => setOpen(true)}
-            aria-label="Open navigation menu"
-            aria-expanded={open}
+        <div className="flex items-center gap-3">
+          <a
+            href={RESTAURANT.phoneHref}
+            className="hidden items-center gap-2 rounded-full bg-salsa px-4 py-2 text-sm font-semibold text-white transition hover:bg-chile sm:inline-flex"
           >
-            <MenuIcon className="h-5 w-5" />
+            <Phone className="h-4 w-4" aria-hidden="true" />
+            {RESTAURANT.phone}
+          </a>
+          <button
+            type="button"
+            className="grid h-10 w-10 place-items-center rounded-full text-crema ring-1 ring-white/25 md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-      </header>
+      </nav>
 
-      {drawer.mounted && (
-        <div
-          className="fixed inset-0 z-[70] lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-        >
-          <button
-            aria-label="Close navigation menu"
-            className={`absolute inset-0 bg-night-950/70 backdrop-blur-md ${
-              drawer.closing ? "anim-fade-out" : "anim-fade-in"
-            }`}
-            onClick={() => setOpen(false)}
-          />
-          <div
-            className={`absolute inset-y-0 right-0 flex w-full max-w-sm flex-col border-l border-white/10 bg-night-950/95 p-7 backdrop-blur-2xl ${
-              drawer.closing ? "anim-drawer-out" : "anim-drawer-in"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <Logo />
-              <button
-                className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-cream-100 transition-colors hover:bg-white/10"
-                onClick={() => setOpen(false)}
-                aria-label="Close navigation menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <nav aria-label="Mobile" className="mt-12 flex flex-col gap-2">
-              {links.map((l, i) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="anim-slide-in group flex items-center justify-between rounded-2xl px-4 py-4 font-display text-3xl font-medium text-cream-100 transition-colors hover:bg-white/5 hover:text-marigold-300"
-                  style={{ animationDelay: `${0.15 + i * 0.07}s` }}
-                >
-                  {l.label}
-                  <span
-                    aria-hidden
-                    className="h-1.5 w-1.5 rounded-full bg-marigold-400 opacity-0 transition-opacity group-hover:opacity-100"
-                  />
-                </a>
-              ))}
-            </nav>
-
-            <div className="mt-auto space-y-4 pt-10">
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  onReserve();
-                }}
-                className="btn-shine inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-marigold-300 to-marigold-500 px-5 py-3.5 text-sm font-bold text-night-950 shadow-[0_8px_28px_-8px_rgba(240,191,79,0.6)]"
-              >
-                <CalendarCheck className="h-4 w-4" aria-hidden />
-                Reserve a Table
-              </button>
+      <div
+        id="mobile-nav"
+        className={cn(
+          "grid overflow-hidden transition-all duration-300 md:hidden",
+          open ? "grid-rows-[1fr] border-t border-white/10" : "grid-rows-[0fr]",
+        )}
+      >
+        <ul className="min-h-0 space-y-1 px-5 pb-5 pt-3">
+          {links.map((l) => (
+            <li key={l.href}>
               <a
-                href="tel:+12038781910"
-                className="flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3.5 text-sm font-semibold text-cream-100"
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="block rounded-xl px-3 py-3 font-display text-2xl font-bold text-crema hover:bg-white/5"
               >
-                <Phone className="h-4 w-4 text-marigold-300" aria-hidden />
-                (203) 878-1910
+                {l.label}
               </a>
-              <p className="text-center text-xs text-cream-500">
-                Tue – Sun from 12 PM · 501 New Haven Ave, Milford
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+            </li>
+          ))}
+          <li className="pt-2">
+            <a
+              href={RESTAURANT.phoneHref}
+              className="flex items-center justify-center gap-2 rounded-full bg-salsa px-4 py-3 font-semibold text-white"
+            >
+              <Phone className="h-4 w-4" aria-hidden="true" />
+              Call {RESTAURANT.phone}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </header>
   );
 }
