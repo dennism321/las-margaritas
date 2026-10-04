@@ -26,9 +26,11 @@ export default function Navbar() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
-        scrolled || open
-          ? "bg-carbon/95 shadow-lg shadow-black/20 backdrop-blur"
-          : "bg-transparent",
+        open
+          ? "bg-carbon shadow-lg shadow-black/20"
+          : scrolled
+            ? "bg-carbon/95 shadow-lg shadow-black/20 backdrop-blur"
+            : "bg-transparent",
       )}
     >
       <nav
@@ -42,9 +44,7 @@ export default function Navbar() {
           aria-label="Las Margaritas Mexican Restaurant Home"
         >
           {/* Restaurant logo (transparent background) */}
-          <LasMargaritasLogo
-            className="h-[4.5rem] w-auto transition-transform duration-300 group-hover:scale-105 sm:h-20"
-          />
+          <LasMargaritasLogo className="h-[4.5rem] w-auto transition-transform duration-300 group-hover:scale-105 sm:h-20" />
         </a>
 
         <ul className="hidden items-center gap-8 md:flex">
@@ -81,35 +81,39 @@ export default function Navbar() {
         </div>
       </nav>
 
+      {/* Collapses via grid rows 0fr; padding lives inside so nothing peeks out when closed */}
       <div
         id="mobile-nav"
+        inert={!open}
         className={cn(
           "grid overflow-hidden transition-all duration-300 md:hidden",
           open ? "grid-rows-[1fr] border-t border-white/10" : "grid-rows-[0fr]",
         )}
       >
-        <ul className="min-h-0 space-y-1 px-5 pb-5 pt-3">
-          {links.map((l) => (
-            <li key={l.href}>
+        <div className="min-h-0 overflow-hidden">
+          <ul className="space-y-1 px-5 pb-5 pt-3">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-3 py-3 font-display text-2xl font-bold text-crema hover:bg-white/5"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+            <li className="pt-2">
               <a
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="block rounded-xl px-3 py-3 font-display text-2xl font-bold text-crema hover:bg-white/5"
+                href={RESTAURANT.phoneHref}
+                className="flex items-center justify-center gap-2 rounded-full bg-salsa px-4 py-3 font-semibold text-white"
               >
-                {l.label}
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                Call {RESTAURANT.phone}
               </a>
             </li>
-          ))}
-          <li className="pt-2">
-            <a
-              href={RESTAURANT.phoneHref}
-              className="flex items-center justify-center gap-2 rounded-full bg-salsa px-4 py-3 font-semibold text-white"
-            >
-              <Phone className="h-4 w-4" aria-hidden="true" />
-              Call {RESTAURANT.phone}
-            </a>
-          </li>
-        </ul>
+          </ul>
+        </div>
       </div>
     </header>
   );

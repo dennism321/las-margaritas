@@ -5,32 +5,48 @@ import { RESTAURANT } from "../data/info";
 import { useOpenStatus } from "../hooks/useOpenStatus";
 import { cn } from "../utils/cn";
 
-const VIDEO_SOURCES = [
-  "https://videos.pexels.com/video-files/7772225/7772225-hd_1920_1080_24fps.mp4",
-  "https://videos.pexels.com/video-files/7613415/7613415-hd_1920_1080_24fps.mp4",
-];
-const POSTER =
-  "https://images.pexels.com/videos/7772225/5-de-mayo-beer-bowl-bread-7772225.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1080&w=1920";
+// Hero video, re-encoded from Pexels clip 7772225: a 1280x720 version for wide
+// screens and a 540x960 portrait crop for phones (about 1 MB and 280 KB instead
+// of the 5.5 MB original). The still frames show until the video is ready.
+const VIDEO_WIDE = "media/hero-1280.mp4";
+const VIDEO_PORTRAIT = "media/hero-phone-540.mp4";
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
+  const [videoShown, setVideoShown] = useState(false);
   const status = useOpenStatus();
 
+  // Start the video only after the rest of the page has loaded, and skip it for
+  // visitors who asked for less motion or less data.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      v.pause();
-      return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+      ?.saveData;
+    if (reduceMotion || saveData) return;
+
+    const start = () => {
+      v.src = window.matchMedia("(orientation: portrait)").matches ? VIDEO_PORTRAIT : VIDEO_WIDE;
+      v.play().catch(() => setPlaying(false));
+    };
+    if (document.readyState === "complete") start();
+    else {
+      window.addEventListener("load", start, { once: true });
+      return () => window.removeEventListener("load", start);
     }
-    v.play().catch(() => setPlaying(false));
   }, []);
 
   const toggle = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) void v.play();
+    if (v.paused) {
+      // The video may not have been loaded yet (reduced motion / data saver).
+      if (!v.getAttribute("src"))
+        v.src = window.matchMedia("(orientation: portrait)").matches ? VIDEO_PORTRAIT : VIDEO_WIDE;
+      void v.play();
+    }
     else v.pause();
   };
 
@@ -39,24 +55,41 @@ export default function Hero() {
       id="top"
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-carbon text-crema"
     >
-      {/* Background video */}
+      {/* Still frame shown right away; the video fades in over it once playing */}
+      <picture>
+        <source
+          media="(orientation: portrait)"
+          srcSet="media/hero-poster-phone-540.webp"
+          width={540}
+          height={960}
+        />
+        <img
+          src="media/hero-poster-1280.webp"
+          alt=""
+          aria-hidden="true"
+          width={1280}
+          height={720}
+          fetchPriority="high"
+          className="absolute inset-0 -z-40 h-full w-full object-cover"
+        />
+      </picture>
       <video
         ref={videoRef}
-        className="absolute inset-0 -z-30 h-full w-full object-cover"
-        autoPlay
+        className={cn(
+          "absolute inset-0 -z-30 h-full w-full object-cover transition-opacity duration-700",
+          videoShown ? "opacity-100" : "opacity-0",
+        )}
         muted
         loop
         playsInline
-        preload="auto"
-        poster={POSTER}
+        preload="none"
         aria-hidden="true"
-        onPlay={() => setPlaying(true)}
+        onPlaying={() => {
+          setPlaying(true);
+          setVideoShown(true);
+        }}
         onPause={() => setPlaying(false)}
-      >
-        {VIDEO_SOURCES.map((src) => (
-          <source key={src} src={src} type="video/mp4" />
-        ))}
-      </video>
+      />
 
       {/* Colour grading: charcoal vignette + a wash of salsa red */}
       <div className="absolute inset-0 -z-20 bg-gradient-to-b from-carbon/80 via-carbon/45 to-carbon/90" />
@@ -113,6 +146,7 @@ export default function Hero() {
                 <img
                   src="https://images.pexels.com/photos/32375355/pexels-photo-32375355.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=350&w=500"
                   alt="Sizzling platter of Mexican fajitas"
+                  loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <span className="absolute bottom-2 left-2 rounded-full bg-salsa/90 px-2.5 py-0.5 text-[0.7rem] font-bold uppercase tracking-wider text-white shadow backdrop-blur">

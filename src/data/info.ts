@@ -42,6 +42,8 @@ export type OpenStatus = {
   isOpen: boolean;
   today: string;
   label: string;
+  /** false until the visitor's clock has been checked */
+  known?: boolean;
 };
 
 export function getOpenStatus(now: Date = new Date()): OpenStatus {

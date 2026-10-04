@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/*
+ * Fonts are served from this site, trimmed to the weights and characters the
+ * page uses (see public/fonts/README.md). Italic Fraunces holds only letters,
+ * digits and basic punctuation, since it is used for short highlighted words.
+ */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("/fonts/fraunces.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url("/fonts/fraunces-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/dmsans.woff2") format("woff2");
+}
+
 /* ------------------------------------------------------------------
    Palette pulled from the restaurant photos
    - salsa / chile : the tomato-red walls (sunlit + shadowed)
@@ -144,17 +171,33 @@ section[id] {
   }
 }
 
-/* Scroll reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
-    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+/*
+ * Scroll reveal. Sections are visible by default, so the pre-built page reads
+ * fine before any script runs. index.html adds .reveal-on to <html> on larger
+ * screens only, where sections then fade up as they scroll into view.
+ */
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .reveal-on .reveal {
+    transition:
+      opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .reveal-on .reveal:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(24px);
+  }
 }
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
+
+/* Phones: show the hero at once and skip live blur, which costs more than it adds */
+@media (max-width: 767px) {
+  .animate-fade-up,
+  .animate-fade-in {
+    animation: none;
+  }
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -167,10 +210,5 @@ section[id] {
   .animate-fade-in,
   .animate-spin-slow {
     animation: none;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 }

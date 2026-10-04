@@ -1,6 +1,10 @@
 import { Martini, Paintbrush, Sun, Trees, type LucideIcon } from "lucide-react";
 import Reveal from "./Reveal";
 import { cn } from "../utils/cn";
+import { pexelsSrcSet } from "../utils/pexels";
+
+const FAJITAS_IMG =
+  "https://images.pexels.com/photos/32375355/pexels-photo-32375355.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=720&w=1400";
 
 type Card = {
   icon: LucideIcon;
@@ -56,21 +60,27 @@ export default function Experience() {
             <span className="italic text-salsa">every color</span> of the fiesta
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-carbon/70">
-            Tomato-red walls, jade wainscoting, crisp white linens and napkins folded in red and
-            green. Every table at Las Margaritas is set for a celebration, whether it's a quick
-            lunch or a long family dinner.
+            Tomato-red walls, jade wainscoting, crisp white linens and napkins
+            folded in red and green. Every table at Las Margaritas is set for a
+            celebration, whether it's a quick lunch or a long family dinner.
           </p>
 
           {/* Featured Sizzling Fajitas Culinary Showcase */}
           <div className="group relative mt-10 overflow-hidden rounded-[2.5rem] border-4 border-white shadow-2xl shadow-carbon/15">
             <div className="relative aspect-[21/9] w-full overflow-hidden sm:aspect-[2.6/1]">
               <img
-                src="https://images.pexels.com/photos/32375355/pexels-photo-32375355.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=720&w=1400"
+                src={FAJITAS_IMG}
+                srcSet={pexelsSrcSet(FAJITAS_IMG, [640, 960, 1400])}
+                sizes="(min-width: 1280px) 1100px, 92vw"
+                loading="lazy"
                 alt="Sizzling platter of famous fajitas with grilled peppers, onions, tortillas, rice and beans"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-carbon/80 via-carbon/25 to-transparent" />
-              <div className="talavera-strip absolute inset-x-0 top-0 opacity-80" aria-hidden="true" />
+              <div
+                className="talavera-strip absolute inset-x-0 top-0 opacity-80"
+                aria-hidden="true"
+              />
 
               <div className="absolute inset-x-6 bottom-5 flex flex-wrap items-end justify-between gap-3 text-left sm:inset-x-8 sm:bottom-6">
                 <div>
@@ -81,7 +91,8 @@ export default function Experience() {
                     Served Sizzling to Your Table
                   </p>
                   <p className="mt-1 text-xs text-crema/85 sm:text-sm">
-                    Marinated in house spices, served with rice, beans, guacamole, sour cream &amp; warm flour tortillas
+                    Marinated in house spices, served with rice, beans,
+                    guacamole, sour cream &amp; warm flour tortillas
                   </p>
                 </div>
                 <div className="hidden items-center gap-2 rounded-full bg-carbon/80 px-4 py-1.5 text-xs font-semibold text-crema backdrop-blur sm:flex">
@@ -106,11 +117,16 @@ export default function Experience() {
                   className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 transition-transform duration-500 group-hover:scale-125"
                   aria-hidden="true"
                 />
-                <c.icon className={cn("relative h-9 w-9", c.accent)} aria-hidden="true" />
+                <c.icon
+                  className={cn("relative h-9 w-9", c.accent)}
+                  aria-hidden="true"
+                />
                 <h3 className="relative mt-auto pt-10 font-display text-2xl font-bold leading-tight">
                   {c.title}
                 </h3>
-                <p className="relative mt-3 text-[0.95rem] leading-relaxed opacity-90">{c.text}</p>
+                <p className="relative mt-3 text-[0.95rem] leading-relaxed opacity-90">
+                  {c.text}
+                </p>
               </article>
             </Reveal>
           ))}

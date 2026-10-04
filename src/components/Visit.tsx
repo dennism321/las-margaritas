@@ -28,14 +28,16 @@ export default function Visit() {
                   <Clock className="h-6 w-6 text-marigold" aria-hidden="true" />
                   Hours
                 </h3>
-                <span
-                  className={cn(
-                    "rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider",
-                    status.isOpen ? "bg-lima text-carbon" : "bg-marigold text-carbon",
-                  )}
-                >
-                  {status.isOpen ? "Open now" : "Closed"}
-                </span>
+                {status.known !== false && (
+                  <span
+                    className={cn(
+                      "rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider",
+                      status.isOpen ? "bg-lima text-carbon" : "bg-marigold text-carbon",
+                    )}
+                  >
+                    {status.isOpen ? "Open now" : "Closed"}
+                  </span>
+                )}
               </div>
 
               <ul className="mt-6 divide-y divide-white/10">
@@ -62,7 +64,10 @@ export default function Visit() {
                   );
                 })}
               </ul>
-              <p className="mt-4 text-sm text-crema/60">{status.label} (Eastern Time)</p>
+              <p className="mt-4 text-sm text-crema/60">
+                {status.label}
+                {status.known !== false && " (Eastern Time)"}
+              </p>
 
               <div className="mt-8 space-y-4 border-t border-white/10 pt-8">
                 <div className="flex items-start gap-3">
